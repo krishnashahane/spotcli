@@ -1,0 +1,29 @@
+# Build artifacts
+/bin/
+/build/
+/dist/
+/out/
+/spotcli
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+*.prof
+*.cover
+*.trace
+
+# Coverage
+coverage.out
+
+# Go tooling
+/vendor/
+
+# Editor/OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+*~

@@ -1,0 +1,39 @@
+version: 2
+
+project_name: spotcli
+
+changelog:
+  disable: true
+
+builds:
+  - id: spotcli
+    main: ./cmd/spotcli
+    binary: spotcli
+    env:
+      - CGO_ENABLED=0
+    targets:
+      - linux_amd64
+      - linux_arm64
+      - windows_amd64
+      - windows_arm64
+  - id: spotcli_darwin
+    main: ./cmd/spotcli
+    binary: spotcli
+    env:
+      - CGO_ENABLED=1
+    targets:
+      - darwin_amd64
+      - darwin_arm64
+
+archives:
+  - builds:
+      - spotcli
+      - spotcli_darwin
+    format: tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    format_overrides:
+      - goos: windows
+        format: zip
+
+checksum:
+  name_template: checksums.txt

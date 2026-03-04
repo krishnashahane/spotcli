@@ -1,0 +1,22 @@
+version: "2"
+
+run:
+  timeout: 5m
+
+linters:
+  enable:
+    - asciicheck
+    - bidichk
+    - errcheck
+    - govet
+    - staticcheck
+    - ineffassign
+    - unconvert
+    - unused
+    - misspell
+    - prealloc
+    - bodyclose
+    - errorlint
+    - nilerr
+    - nilnil
+    - durationcheck
