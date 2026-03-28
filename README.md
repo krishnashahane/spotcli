@@ -117,4 +117,4 @@ This tool interacts with Spotify's web endpoints. Use responsibly and in accorda
 
 ## License
 
-Apache-2.0
+MIT
