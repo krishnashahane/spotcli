@@ -18,6 +18,7 @@ import (
 )
 
 const (
+	maxTotpSecretBody = 1 << 20
 	totpSecretEnv     = "SPOTCLI_TOTP_SECRET_URL"
 	totpCacheTTL      = 15 * time.Minute
 	fallbackTotpVer   = 18
@@ -89,10 +90,10 @@ func fetchTotpSecretSource(ctx context.Context, source string) (int, []byte, err
 	if source == "" {
 		return 0, nil, errors.New("totp secret source empty")
 	}
-	if strings.HasPrefix(source, "http://") || strings.HasPrefix(source, "https://") {
+	if strings.HasPrefix(source, "https://") {
 		return fetchTotpSecretHTTPURL(ctx, source)
 	}
-	if strings.HasPrefix(source, "file://") {
+	if strings.HasPrefix(source, "http://") {\n\t\treturn 0, nil, errors.New("insecure http totp secret source rejected")\n\t}\n\tif strings.HasPrefix(source, "file://") {
 		return loadTotpSecretFile(strings.TrimPrefix(source, "file://"))
 	}
 	return loadTotpSecretFile(source)
@@ -112,7 +113,7 @@ func fetchTotpSecretHTTPURL(ctx context.Context, source string) (int, []byte, er
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		return 0, nil, fmt.Errorf("totp secrets status %d", resp.StatusCode)
 	}
-	return parseTotpSecret(resp.Body)
+	return parseTotpSecret(io.LimitReader(resp.Body, maxTotpSecretBody))
 }
 
 func loadTotpSecretFile(path string) (int, []byte, error) {
@@ -124,7 +125,7 @@ func loadTotpSecretFile(path string) (int, []byte, error) {
 		return 0, nil, err
 	}
 	defer func() { _ = file.Close() }()
-	return parseTotpSecret(file)
+	return parseTotpSecret(io.LimitReader(file, maxTotpSecretBody))
 }
 
 func parseTotpSecret(reader io.Reader) (int, []byte, error) {
