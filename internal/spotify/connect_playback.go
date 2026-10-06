@@ -51,7 +51,7 @@ func (c *ConnectClient) transfer(ctx context.Context, deviceID string) error {
 	if fromID == "" {
 		return errors.New("missing origin device id")
 	}
-	return c.sendConnectCommand(ctx, fmt.Sprintf("%s/connect/transfer/from/%s/to/%s", connectStateBase, fromID, deviceID), map[string]any{
+	return c.sendConnectCommand(ctx, fmt.Sprintf("%s/connect/transfer/from/%s/to/%s", connectStateBase, url.PathEscape(fromID), url.PathEscape(deviceID)), map[string]any{
 		"transfer_options": map[string]any{
 			"restore_paused": "resume",
 		},
@@ -146,7 +146,7 @@ func (c *ConnectClient) volume(ctx context.Context, volume int) error {
 		return errors.New("missing device id")
 	}
 	value := int(float64(volume) / 100 * 65535)
-	return c.sendConnectCommand(ctx, fmt.Sprintf("%s/connect/volume/from/%s/to/%s", connectStateBase, fromID, state.activeDeviceID), map[string]any{
+	return c.sendConnectCommand(ctx, fmt.Sprintf("%s/connect/volume/from/%s/to/%s", connectStateBase, url.PathEscape(fromID), url.PathEscape(state.activeDeviceID)), map[string]any{
 		"volume": value,
 	})
 }
@@ -255,7 +255,7 @@ func (c *ConnectClient) connectState(ctx context.Context) (connectState, error) 
 			},
 		},
 	}
-	req, err := http.NewRequestWithContext(ctx, http.MethodPut, fmt.Sprintf("%s/devices/hobs_%s", connectStateBase, deviceID), encodeJSON(payload))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPut, fmt.Sprintf("%s/devices/hobs_%s", connectStateBase, url.PathEscape(deviceID)), encodeJSON(payload))
 	if err != nil {
 		return connectState{}, err
 	}
@@ -402,7 +402,7 @@ func (c *ConnectClient) sendPlayerCommand(ctx context.Context, state connectStat
 	if fromID == "" || state.activeDeviceID == "" {
 		return errors.New("missing device id")
 	}
-	url := fmt.Sprintf("%s/player/command/from/%s/to/%s", connectStateBase, fromID, state.activeDeviceID)
+	url := fmt.Sprintf("%s/player/command/from/%s/to/%s", connectStateBase, url.PathEscape(fromID), url.PathEscape(state.activeDeviceID))
 	return c.sendConnectCommand(ctx, url, payload)
 }
 
