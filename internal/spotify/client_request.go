@@ -38,6 +38,7 @@ func (c *Client) postParams(ctx context.Context, path string, params url.Values)
 
 func (c *Client) send(ctx context.Context, method, path string, params url.Values, payload any, dest any) error {
 	const (
+		maxResponseBody = 4 << 20
 		maxAttempts   = 3
 		maxRetryDelay = 3 * time.Second
 	)
@@ -127,7 +128,7 @@ func (c *Client) send(ctx context.Context, method, path string, params url.Value
 		if resp.ContentLength == 0 {
 			return nil
 		}
-		return json.NewDecoder(resp.Body).Decode(dest)
+		return json.NewDecoder(io.LimitReader(resp.Body, maxResponseBody)).Decode(dest)
 	}
 	return errors.New("spotify api error (429): rate limit retry exhausted")
 }
