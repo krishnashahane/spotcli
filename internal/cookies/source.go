@@ -40,7 +40,7 @@ type FileSource struct {
 }
 
 func (s BrowserSource) Cookies(ctx context.Context) ([]*http.Cookie, error) {
-	domain := strings.TrimSpace(s.Domain)
+	domain := strings.ToLower(strings.TrimSpace(s.Domain))
 	if domain == "" {
 		domain = "spotify.com"
 	}
@@ -52,7 +52,7 @@ func (s BrowserSource) Cookies(ctx context.Context) ([]*http.Cookie, error) {
 	}
 	url := "https://" + host
 	origins := []string{}
-	if strings.Contains(host, "spotify.com") {
+	if host == "spotify.com" || host == "open.spotify.com" || strings.HasSuffix(host, ".spotify.com") {
 		if host != "open.spotify.com" {
 			origins = append(origins, "https://open.spotify.com")
 		}
