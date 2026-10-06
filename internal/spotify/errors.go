@@ -31,7 +31,7 @@ func apiErrorFromResponse(resp *http.Response) error {
 	if resp == nil {
 		return APIError{Message: "nil response"}
 	}
-	body, _ := io.ReadAll(resp.Body)
+	body, _ := io.ReadAll(io.LimitReader(resp.Body, maxAPIErrorBody))
 	payload := struct {
 		Error struct {
 			Status  int    `json:"status"`
